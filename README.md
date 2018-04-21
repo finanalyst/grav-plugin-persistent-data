@@ -58,6 +58,7 @@ access:
     site.login: true
 process:
     twig: true
+cache_enable: false
 form:
     name: user-data-collect-form
     fields:
@@ -65,28 +66,28 @@ form:
           type: select
           label: Current location
           options:
-              - home: At home
-              - office: At office
-              - gym: At the gym
+              home: At home
+              office: At office
+              gym: At the gym
           default: home
-       - name: mood
-         type: text
-         label: State of mind
+        - name: mood
+          type: text
+          label: State of mind
     buttons:
-     - type: submit
-       value: Store data
+         - type: submit
+           value: Store data
     process:
-        userinfo: true
-        redirect: next
+            userinfo: true
 ---
 
 ## Data collection page
 
 Current values
 
-location: {{userinfo.location}}
+location: {{ userinfo.location }}
 
 mood: {{ userinfo.mood }}
+
 ```
 1. `access: site.login: true` is added to prevent anyone who is not a registered site user from accessing the form or the Twig variable. If there is no authenticated user, then the plugin does nothing.  
 The `access: site` frontmatter element could be added to any page in the site. However, if no user is logged in when the page is rendered, submitting data will have no effect.  
@@ -94,6 +95,8 @@ Consequently, it is probably best to include the line in the file containing the
 
 2. `process: twig: true` is added to the frontmatter so that the `{{ userinfo.location }}` is rendered on the page.   
 `process: twig: true` must be set for all pages that want to access twig. This can be done by **Grav** page by page, or set in the site configuration.
+
+1. `cache_enable: false` is added to the front matter so that the form is rendered again using the new Twig variable.
 
 3. Within the **form** `process: userinfo` must be added to the form. When the form is processed, each field of the form is added to the storage variable.  
 The data is stored in a yaml file in the `data/persistent` directory. The file is named for the `username` associated with the authenticated user.
@@ -112,6 +115,6 @@ The data is stored in plain text, but access to the directory can only be made b
 
 ## To Do
 
-- [ ] Possible extensions, if found necessary:
-    - Change the name of the yaml file containing the persistent data to a hash of the username, rather than the plain username.
-    - Allow for multiple variables from multiple forms.
+- [ ] Possible extensions, depending on user feedback:
+    - Change the name of the yaml file containing the persistent data to mask the username.
+    - Allow for multiple variables from multiple forms, viz., overcome the limitation where a second form with `userinfo` process will override the whole data array.

@@ -7,13 +7,13 @@ use RocketTheme\Toolbox\File\File;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Class TestpluginPlugin
+ * Class PersistentDataPlugin
  * @package Grav\Plugin
  */
-class TestpluginPlugin extends Plugin
+class PersistentDataPlugin extends Plugin
 {
-    protected $myVar;
-    protected $myVarCacheId;
+    protected $userinfo;
+    protected $userinfoCacheId;
 
     public static function getSubscribedEvents()
     {
@@ -31,39 +31,42 @@ class TestpluginPlugin extends Plugin
         if ($this->isAdmin()) {
             return;
         }
-
-        if ( ! $this->grav['user']->get('authenticated') ) return; // if not authenticated, nothing happens
-
+        // Don't proceed unless user is authenticated
+        if ( ! $this->grav['user']->get('authenticated') ) {
+            return;
+        }
         // Enable the events we are interested in
         $this->enable([
             'onTwigExtensions' => ['onTwigExtensions',0],
             'onFormProcessed' => ['onFormProcessed',0]
         ]);
 
-        # set up cache_enable
+        # set up cache
         $cache = $this->grav['cache'];
         //init cache id
-        $this->myVarCacheId = md5($this->config->get(plugins.testplugin.varname) . $cache->getKey() );
+        $this->userinfoCacheId = md5('persistent-data-userinfo' . $cache->getKey() );
 
-        $this->grav['debugger']->addMessage('init data dir' . DATA_DIR);
+        # verify data directory exists
+        if (!file_exists(DATA_DIR . 'persistent' )) {
+            mkdir(DATA_DIR . 'persistent' , 0775, true);
+        }
     }
 
     public function onFormProcessed(Event $event) {
        $action = $event['action'];
        switch ( $action ) {
-          case 'myplugin':
+          case 'userinfo':
                 $form = $event['form'];
-                $this->myVar = $form->value()->toArray();
-                // Save
-                $path = $this->getStoragePath();
-$this->grav['debugger']->addMessage('formProc: path='.$path);
+                $this->userinfo = $form->value()->toArray();
+                // For onFormProcessed to be called, a user has to be authenticated,
+                //  so username is set
+                $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username;
                 $datafh = File::instance($path);
-                $datafh->save(Yaml::dump($this->myVar));
+                $datafh->save(Yaml::dump($this->userinfo));
                 //clear cache
-                $this->grav['cache']->delete($this->myVarCacheId);
-                // make available immediately
-                $this->grav['debugger']->addMessage('varname=');$this->grav['debugger']->addMessage($this->config->get(plugins.testplugin.varname));
-                $this->grav['twig']->twig_vars[$this->config->get(plugins.testplugin.varname)] = $this->myVar;
+                $this->grav['cache']->delete($this->userinfoCacheId);
+                // make available to Twig immediately
+                $this->grav['twig']->twig_vars['userinfo'] = $this->userinfo;
                 break;
         }
     }
@@ -71,43 +74,22 @@ $this->grav['debugger']->addMessage('formProc: path='.$path);
     public function onTwigExtensions() {
         $cache = $this->grav['cache'];
         //search in cache, returns false if not in cache
-        $this->myVar = $cache->fetch($this->myVarCacheId);
-        $this->grav['debugger']->addMessage('twigex start, myVar:');
-        $this->grav['debugger']->addMessage($this->myVar);
-        if (! $this->myVar ) {
-$this->grav['debugger']->addMessage('twigex: no cache');
+        $this->userinfo = $cache->fetch($this->userinfoCacheId);
+        if (! $this->userinfo ) {
             // if not in cache, then look in persistent storage
-            $path = $this->getStoragePath();
+            $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username;
             $datafh = File::instance($path);
-            $datafh->lock();
-$this->grav['debugger']->addMessage('twigex: filename = '.$path);
             if ( file_exists($path) ) {
-$this->grav['debugger']->addMessage('twigex: file exists');
-$this->grav['debugger']->addMessage('twigex: content is: ' . $datafh->content() );
-                $this->myVar = Yaml::parse($datafh->content());
-                if ( $this->myVar === null ) {
-    $this->grav['debugger']->addMessage('no Yaml');
-                    $this->myVar = array();
+                $this->userinfo = Yaml::parse($datafh->content());
+                if ( $this->userinfo === null ) {
+                    $this->userinfo = array();
                 }
             } else {
-$this->grav['debugger']->addMessage('no file');
-                $this->myVar = array();
-                // Save
-                $datafh->save(Yaml::dump($this->myVar));
+                $this->userinfo = array();
+                $datafh->save(Yaml::dump($this->userinfo));
             }
-            $datafh->free();
-            $cache->save($this->myVarCacheId, $this->myVar);
-        } else {
-$this->grav['debugger']->addMessage('twigex: cache exists');
+            $cache->save($this->userinfoCacheId, $this->userinfo);
         }
-$this->grav['debugger']->addMessage('twigex: '.$this->myVar);
-        $this->grav['twig']->twig_vars[$this->config->get(plugins.testplugin.varname)] = $this->myVar;
-    }
-
-    private function getStoragePath() {
-        $locator = $this->grav['locator'];
-        $path = $locator->findResource('user://data/testplugin', true);
-        $path .= DS . $this->grav['user']->username; // must be true because authenciated
-        return $path;
+        $this->grav['twig']->twig_vars['userinfo'] = $this->userinfo;
     }
 }
