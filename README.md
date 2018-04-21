@@ -16,7 +16,7 @@ This will install the Persistent Data plugin into your `/user/plugins` directory
 
 ### Manual Installation
 
-To install this plugin, just download the zip version of this repository and unzip it under `/your/site/grav/user/plugins`. Then, rename the folder to `persistent-data`. You can find these files on [GitHub](https://github.com/r/grav-plugin-persistent-data) or via [GetGrav.org](http://getgrav.org/downloads/plugins#extras).
+To install this plugin, just download the zip version of this repository and unzip it under `/your/site/grav/user/plugins`. Then, rename the folder to `persistent-data`. You can find these files on [GitHub](https://github.com/finanalyst/grav-plugin-persistent-data) or via [GetGrav.org](http://getgrav.org/downloads/plugins#extras).
 
 You should now have all the plugin files under
 
@@ -31,8 +31,6 @@ If you use the admin plugin, you can install directly through the admin plugin b
 ## Configuration
 
 Before configuring this plugin, you should copy the `user/plugins/persistent-data/persistent-data.yaml` to `user/config/plugins/persistent-data.yaml` and only edit that copy.
-
-It is also necessary for there to be a folder `<root>/user/data/persistent` and for it to have the standard **Grav** permissions.
 
 Here is the default configuration and an explanation of available options:
 
