@@ -1,14 +1,13 @@
 name: Persistent Data Plugin
-version: 0.1.0
+version: 1.0.0
 description: Store user related information persistently in site
 icon: plug
 author:
   name: Richard Hainsworth
   email: rnhainsworth@gmail.com
 homepage: https://github.com/finanalyst/grav-plugin-persistent-data
-keywords: grav, plugin, persistent, user information
+keywords: grav, plugin, persistent, data
 bugs: https://github.com/finanalyst/grav-plugin-persistent-data/issues
-docs: https://github.com/finanalyst/grav-plugin-persistent-data/blob/develop/README.md
 license: MIT
 
 form:
