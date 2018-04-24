@@ -87,6 +87,7 @@ class PersistentDataPlugin extends Plugin
             } else {
                 $this->userinfo = array();
                 $datafh->save(Yaml::dump($this->userinfo));
+                chmod($path, 0666);
             }
             $cache->save($this->userinfoCacheId, $this->userinfo);
         }
