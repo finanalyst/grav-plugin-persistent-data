@@ -57,7 +57,34 @@ class PersistentDataPlugin extends Plugin
        switch ( $action ) {
           case 'userinfo':
                 $form = $event['form'];
-                $this->userinfo = $form->value()->toArray();
+                $params = $event['params'];
+                $data = $form->value()->toArray();
+                if (isset($params['update']) and $params['update']) {
+                    $cache = $this->grav['cache'];
+                    //search in cache, returns false if not in cache
+                    $this->userinfo = $cache->fetch($this->userinfoCacheId);
+                    if (! $this->userinfo ) {
+                        // if not in cache, then look in persistent storage
+                        $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username;
+                        $datafh = File::instance($path);
+                        if ( file_exists($path) ) {
+                            $this->userinfo = Yaml::parse($datafh->content());
+                            if ( $this->userinfo === null ) {
+                                $this->userinfo = array();
+                            }
+                        } else {
+                            $this->userinfo = array();
+                            $datafh->save(Yaml::dump($this->userinfo));
+                            chmod($path, 0666);
+                        }
+                    }
+                    // only update fields set by the form
+                    foreach ($data as $key => $val ) {
+                        $this->userinfo[$key] = $val;
+                    }
+                } else { // overwrite existing data
+                    $this->userinfo = $data;
+                }
                 // For onFormProcessed to be called, a user has to be authenticated,
                 //  so username is set
                 $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username;

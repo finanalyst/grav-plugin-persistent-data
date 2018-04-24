@@ -100,11 +100,50 @@ Consequently, it is probably best to include the line in the file containing the
 The data is stored in a yaml file in the `data/persistent` directory. The file is named for the `username` associated with the authenticated user.
 
 4. The example demonstrates how the twig variable is accessed. `userinfo` is the data array, and the fields are the names of the input fields of the form.   
-If another form uses the ***userinfo*** process, then the array will be over-written, and the form fields will be the array fields.
+If another form uses the ***userinfo*** process, then the array will be over-written, and the form fields will be the new array fields.  
+This default action can be over-ridden using the `update` field (see below).
+
+## Updating persistent data
+
+If the `userinfo` Form process has the field `update: true`, then the data from the form will be used to update the `userinfo` persistent data.
+
+This means that multiple forms can be used to update the data without overwriting previous data by using different fields in different forms.
+
+For example, if we create another page `02.update` with `form.md` and the following content:
+```Yaml
+---
+title: Update Form
+form:
+    name: update-form
+    fields:
+        - name: activity
+          label: Current activity
+          type: text
+          default: nothing much
+    buttons:
+         - type: submit
+           value: Amend data
+    process:
+        userinfo:
+            update: true
+---
+## Data amendment page
+
+Current values
+
+location: {{ userinfo.location }}
+
+mood: {{ userinfo.mood }}
+
+activity: {{ userinfo.activity }}
+```
+The data from the second form (in this case `activity`) is added to `userinfo`, leaving the previous data untouched.
+
+If multiple forms have the same field names, then the new values of the fields overwrite the persistent data.
 
 ## Implementation details
 
-1. The plugin also uses the cache facilities provided by **Grav**. This means that the data is read from file only once following the login session authenticating the user. Or until new data is provided through the collection form.
+1. The plugin also uses the cache facilities provided by **Grav**. This means that the data is read from file only once following the login session authenticating the user. Or until new data is provided through the1 collection form.
 > Note: cache must be enabled for all pages that use the `userinfo` twig variable. If cache is not enabled, then the data will be taken from the storage file.
 
 2. The data is stored at `user/data/persistent` with one yaml file for each user.  
@@ -113,6 +152,6 @@ The data is stored in plain text, but access to the directory can only be made b
 
 ## To Do
 
-- [ ] Possible extensions, depending on user feedback:
+- [] Possible extensions, depending on user feedback:
     - Change the name of the yaml file containing the persistent data to mask the username.
-    - Allow for multiple variables from multiple forms, viz., overcome the limitation where a second form with `userinfo` process will override the whole data array.
+- [*]  Allow for multiple variables from multiple forms, viz., overcome the limitation where a second form with `userinfo` process will override the whole data array.
