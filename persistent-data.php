@@ -38,7 +38,8 @@ class PersistentDataPlugin extends Plugin
         // Enable the events we are interested in
         $this->enable([
             'onTwigExtensions' => ['onTwigExtensions',0],
-            'onFormProcessed' => ['onFormProcessed',0]
+            'onFormProcessed' => ['onFormProcessed',0],
+            'onUserLogout' => ['onUserLogout',0]
         ]);
 
         # set up cache
@@ -119,5 +120,15 @@ class PersistentDataPlugin extends Plugin
             $cache->save($this->userinfoCacheId, $this->userinfo);
         }
         $this->grav['twig']->twig_vars['userinfo'] = $this->userinfo;
+    }
+
+    public function onUserLogout() {
+        if ($this->config->get('plugins.persistent-data.forget_on_logout')) {
+            $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username;
+            $datafh = File::instance($path);
+            if ( file_exists($path) ) {
+                $datafh->delete();
+            }
+        }
     }
 }

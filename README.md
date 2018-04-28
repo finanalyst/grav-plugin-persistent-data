@@ -36,9 +36,12 @@ Here is the default configuration and an explanation of available options:
 
 ```yaml
 enabled: true
+forget_on_logout: false
 ```
 
 Note that if you use the admin plugin, a file with your configuration, and named persistent-data.yaml will be saved in the `user/config/plugins/` folder once the configuration is saved in the admin.
+
+The default is for user data to be retained even after the user has logged out, and so is set when the user logs back in. If this is not desired, then set `forget_on_logout` to true.
 
 ## Usage
 

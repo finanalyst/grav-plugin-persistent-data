@@ -1,5 +1,5 @@
 name: Persistent Data Plugin
-version: 1.1.0
+version: 1.2.0
 description: Store user related information persistently in site
 icon: plug
 author:
@@ -21,5 +21,15 @@ form:
       options:
         1: Enabled
         0: Disabled
+      validate:
+        type: bool
+    forget_on_logout:
+      type: toggle
+      label: Forget persistent data when user logs out
+      highlight: 0
+      default: 0
+      options:
+        0: No
+        1: Yes
       validate:
         type: bool
