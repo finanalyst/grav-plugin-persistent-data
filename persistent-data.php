@@ -76,7 +76,7 @@ class PersistentDataPlugin extends Plugin
                         } else {
                             $this->userinfo = array();
                             $datafh->save(Yaml::dump($this->userinfo));
-                            chmod($path, 0666);
+                            chmod($path, 0664);
                         }
                     }
                     // only update fields set by the form
@@ -115,7 +115,7 @@ class PersistentDataPlugin extends Plugin
             } else {
                 $this->userinfo = array();
                 $datafh->save(Yaml::dump($this->userinfo));
-                chmod($path, 0666);
+                chmod($path, 0664);
             }
             $cache->save($this->userinfoCacheId, $this->userinfo);
         }

@@ -1,3 +1,7 @@
+# v1.2.1
+## 16 Junne 2018
+1. [](#bugfix)
+    * fix wrong permission on stored file
 # v1.2.0
 ##  04/24/2018
 
