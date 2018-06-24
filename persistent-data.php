@@ -88,7 +88,7 @@ class PersistentDataPlugin extends Plugin
                 }
                 // For onFormProcessed to be called, a user has to be authenticated,
                 //  so username is set
-                $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username;
+                $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username . '.yaml';
                 $datafh = File::instance($path);
                 $datafh->save(Yaml::dump($this->userinfo));
                 //clear cache
@@ -105,7 +105,7 @@ class PersistentDataPlugin extends Plugin
         $this->userinfo = $cache->fetch($this->userinfoCacheId);
         if (! $this->userinfo ) {
             // if not in cache, then look in persistent storage
-            $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username;
+            $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username . '.yaml';
             $datafh = File::instance($path);
             if ( file_exists($path) ) {
                 $this->userinfo = Yaml::parse($datafh->content());
@@ -124,7 +124,7 @@ class PersistentDataPlugin extends Plugin
 
     public function onUserLogout() {
         if ($this->config->get('plugins.persistent-data.forget_on_logout')) {
-            $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username;
+            $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username . '.yaml';
             $datafh = File::instance($path);
             if ( file_exists($path) ) {
                 $datafh->delete();

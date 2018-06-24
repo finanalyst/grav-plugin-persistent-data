@@ -49,6 +49,8 @@ A form process is provided and all the data in the form is stored in a file asso
 
 The ***Form*** process is `userinfo`, and the data can be accessed elsewhere as `{{ userinfo.field }}`
 
+By installing the [**DataManager**](https://github.com/getgrav/grav-plugin-data-manager) admin-panel plugin, the persistent data can be examined from the Admin Panel.
+
 #### Example with explanation
 
 Suppose the following is the content of the file `user/pages/01.start/form.md`:

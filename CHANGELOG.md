@@ -1,5 +1,11 @@
+# v1.2.2
+## 23 June 2018
+1. [](#enhancement)
+    * persistent data is stored as yaml, so name with yaml extension.
+    Allows for the data to be visualised by DataManager plugin.
+
 # v1.2.1
-## 16 Junne 2018
+## 16 June 2018
 1. [](#bugfix)
     * fix wrong permission on stored file
 # v1.2.0
