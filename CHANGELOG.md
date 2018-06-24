@@ -1,3 +1,9 @@
+# v1.2.3
+## 24 June 2018
+1. [](#enhancement)
+    * Add include option that only includes listed fields.
+    * Bugfix on file name -> .yaml
+
 # v1.2.2
 ## 23 June 2018
 1. [](#enhancement)

@@ -146,9 +146,29 @@ The data from the second form (in this case `activity`) is added to `userinfo`, 
 
 If multiple forms have the same field names, then the new values of the fields overwrite the persistent data.
 
+## Include Field
+If the `userinfo` contains an `include` field together with an array of form field names, then **only** the form fields named in the array will be updated.
+
+The  use case is when a form has many form fields, but only a limited number should be included in the persistent data.
+
+Partial example. In a form with many fields `form.md`
+```yaml
+---
+form:
+    fields:
+        - name: user_id
+          type: select
+# other form fields, buttons, etc
+    process:
+        userinfo:
+            update: true
+            include:
+                - user_id
+---
+
 ## Implementation details
 
-1. The plugin also uses the cache facilities provided by **Grav**. This means that the data is read from file only once following the login session authenticating the user. Or until new data is provided through the1 collection form.
+1. The plugin also uses the cache facilities provided by **Grav**. This means that the data is read from file only once following the login session authenticating the user. Or until new data is provided through the collection form.
 > Note: cache must be enabled for all pages that use the `userinfo` twig variable. If cache is not enabled, then the data will be taken from the storage file.
 
 2. The data is stored at `user/data/persistent` with one yaml file for each user.  

@@ -60,13 +60,20 @@ class PersistentDataPlugin extends Plugin
                 $form = $event['form'];
                 $params = $event['params'];
                 $data = $form->value()->toArray();
+                // if an include option is set, then filter out fields not in the include array
+                if (isset($params['include']) and is_array($params['include'])) {
+                    foreach ( $params['include'] as $incl ) {
+                        $tmp[$incl] = isset($data[$incl])?$data[$incl]:'';
+                    }
+                    $data = $tmp;
+                }
                 if (isset($params['update']) and $params['update']) {
                     $cache = $this->grav['cache'];
                     //search in cache, returns false if not in cache
                     $this->userinfo = $cache->fetch($this->userinfoCacheId);
                     if (! $this->userinfo ) {
                         // if not in cache, then look in persistent storage
-                        $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username;
+                        $path = DATA_DIR . 'persistent' . DS . $this->grav['user']->username . '.yaml';
                         $datafh = File::instance($path);
                         if ( file_exists($path) ) {
                             $this->userinfo = Yaml::parse($datafh->content());
